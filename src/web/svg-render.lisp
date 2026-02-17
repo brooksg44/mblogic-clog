@@ -196,8 +196,10 @@
          (global-max-cols (/ (- svg-width 150) +cell-w+))
          ;; This rung's own contact zone width
          (rung-cols (ladder-rung-cols rung))
-         ;; Coil cells for wire routing
-         (coil-cells (remove-if-not (lambda (c) (eq (ladder-cell-type c) :coil)) cells))
+         ;; Output-zone cells (coils and control instructions) for wire routing
+         (coil-cells (remove-if-not (lambda (c)
+                                      (member (ladder-cell-type c) '(:coil :control)))
+                                    cells))
          (max-coil-row (if coil-cells
                            (reduce #'max coil-cells :key #'ladder-cell-row :initial-value 0)
                            -1)))
@@ -231,8 +233,8 @@
                (svg-id (get-svg-id sym))
                (row (ladder-cell-row cell))
                (col (ladder-cell-col cell))
-               ;; Coil cells render at the far-right coil zone; others at their column
-               (x (if (eq (ladder-cell-type cell) :coil)
+               ;; Output-zone cells (coils + control) render at far-right; others at their column
+               (x (if (member (ladder-cell-type cell) '(:coil :control))
                       (cell-x global-max-cols)
                       (cell-x col)))
                (y (cell-y row))
