@@ -163,19 +163,25 @@
 ;;; SVG Rung Rendering
 ;;; ============================================================
 
-(defun render-rung-svg (rung &optional address-values)
+(defun rung-max-col (rung)
+  "Return the maximum column index used by any cell in RUNG."
+  (let ((cells (ladder-rung-cells rung)))
+    (if cells
+        (reduce #'max cells :key #'ladder-cell-col :initial-value 0)
+        0)))
+
+(defun render-rung-svg (rung &optional address-values fixed-width)
   "Generate SVG string for a ladder rung.
    RUNG is a ladder-rung struct.
    ADDRESS-VALUES is an optional hash-table of address -> (value . type).
+   FIXED-WIDTH, if provided, overrides the per-rung computed SVG width so
+   all rungs in a program share the same canvas width.
    Returns an SVG string with the rung's ladder diagram."
   (let* ((rows (ladder-rung-rows rung))
          (cells (ladder-rung-cells rung))
-         ;; Find max column from cells to determine SVG width
-         (max-col (if cells
-                      (reduce #'max cells :key #'ladder-cell-col :initial-value 0)
-                      0))
-         ;; Width: accommodate up to 3-wide blocks at the last column
-         (svg-width (+ (* (+ max-col 1) +cell-w+) 150))
+         ;; Width: use fixed-width if supplied, otherwise compute from this rung's cells
+         (svg-width (or fixed-width
+                        (+ (* (+ (rung-max-col rung) 1) +cell-w+) 150)))
          ;; Height: top margin + rows + bottom margin
          (view-top (- (+ +sym-top+ +addr-margin+)))
          (view-height (+ +addr-margin+ +sym-top+
@@ -246,16 +252,19 @@
       (let ((rungs (ladder-program-rungs ladder-prog)))
         (if (null rungs)
             (format s "<p>No rungs in this subroutine.</p>")
-            (dolist (rung rungs)
-              ;; Rung number header
-              (format s "<p class=\"rungnumberarea\">Rung ~D</p>"
-                      (ladder-rung-number rung))
-              ;; Comment (if any)
-              (let ((comment (ladder-rung-comment rung)))
-                (when (and comment (> (length comment) 0))
-                  (format s "<p class=\"commentarea\">~A</p>"
-                          (escape-svg-text comment))))
-              ;; Rung SVG
-              (write-string (render-rung-svg rung address-values) s)))))))
+            ;; Compute uniform width from the widest rung in the program
+            (let* ((max-col (reduce #'max rungs :key #'rung-max-col :initial-value 0))
+                   (uniform-width (+ (* (+ max-col 1) +cell-w+) 150)))
+              (dolist (rung rungs)
+                ;; Rung number header
+                (format s "<p class=\"rungnumberarea\">Rung ~D</p>"
+                        (ladder-rung-number rung))
+                ;; Comment (if any)
+                (let ((comment (ladder-rung-comment rung)))
+                  (when (and comment (> (length comment) 0))
+                    (format s "<p class=\"commentarea\">~A</p>"
+                            (escape-svg-text comment))))
+                ;; Rung SVG — all at uniform width
+                (write-string (render-rung-svg rung address-values uniform-width) s))))))))
 
 ;;; End of svg-render.lisp
