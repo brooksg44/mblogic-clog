@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBLogic-CL Web Interface</title>
+    <link rel="stylesheet" href="/css/ladder.css">
+    <style>
+        .dashboard {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .dashboard h1 {
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .card a {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        .card a:hover {
+            background: #2980b9;
+        }
+
+        .usage-example {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+
+        .usage-example .comment {
+            color: #6a9955;
+        }
+
+        .usage-example .keyword {
+            color: #0070c1;
+        }
+
+        .api-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .api-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-family: monospace;
+        }
+
+        .api-list li:last-child {
+            border-bottom: none;
+        }
+
+        .method {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .method-get {
+            background: #27ae60;
+            color: white;
+        }
+
+        .method-post {
+            background: #e74c3c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>MBLogic-CL Web Interface</h1>
+
+        <div class="card">
+            <h2>Ladder Diagram Monitor</h2>
+            <p>
+                View and monitor your PLC program as a ladder diagram. Watch logic states
+                update in real-time as the PLC executes.
+            </p>
+            <a href="/laddermonitor.html">Open Ladder Monitor</a>
+        </div>
+
+        <div class="card">
+            <h2>Quick Start</h2>
+            <p>Load the web module and start the server with your PLC program:</p>
+            <div class="usage-example">
+<span class="comment">;; Load the web interface module</span><br>
+(<span class="keyword">ql:quickload</span> :mblogic-cl/web)<br>
+<br>
+<span class="comment">;; Compile your IL program</span><br>
+(<span class="keyword">defparameter</span> *program* (mblogic-cl:compile-il-file "test/plcprog.txt"))<br>
+<br>
+<span class="comment">;; Create an interpreter</span><br>
+(<span class="keyword">defparameter</span> *interp* (mblogic-cl:make-plc-interpreter :program *program*))<br>
+<br>
+<span class="comment">;; Start the web server</span><br>
+(mblogic-cl-web:start-web-server :port 8080 :interpreter *interp*)<br>
+<br>
+<span class="comment">;; Or use the quick-start function:</span><br>
+(mblogic-cl-web:quick-start "test/plcprog.txt" :port 8080)
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>API Endpoints</h2>
+            <ul class="api-list">
+                <li>
+                    <span class="method method-get">GET</span>
+                    /api/statistics - PLC runtime statistics
+                </li>
+                <li>
+                    <span class="method method-get">GET</span>
+                    /api/data?addr=X1,Y1,DS1 - Read address values
+                </li>
+                <li>
+                    <span class="method method-get">GET</span>
+                    /api/program?subrname=main - Get ladder structure
+                </li>
+                <li>
+                    <span class="method method-get">GET</span>
+                    /api/subroutines - List subroutines
+                </li>
+                <li>
+                    <span class="method method-post">POST</span>
+                    /api/control/start - Start PLC execution
+                </li>
+                <li>
+                    <span class="method method-post">POST</span>
+                    /api/control/stop - Stop PLC execution
+                </li>
+                <li>
+                    <span class="method method-post">POST</span>
+                    /api/control/step - Execute single scan
+                </li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>About</h2>
+            <p>
+                MBLogic-CL is a Common Lisp implementation of a soft PLC that compiles and
+                executes Instruction List (IL) programs. This web interface provides ladder
+                diagram visualization and live monitoring capabilities.
+            </p>
+            <p>
+                Based on the original MBLogic Python system for industrial automation.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

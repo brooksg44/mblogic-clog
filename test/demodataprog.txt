@@ -1,0 +1,146 @@
+// Structured Text (ST) Example
+// This program generates ladder diagrams similar to demodata.js
+// Load with: (mblogic-cl:parse-il-file "test/demodataprog.txt")
+
+SBR DemodataST
+
+NETWORK 1
+// Basic rung with OR branch and compare instructions
+// Matches demodata.js Rung 1 structure
+STR X1
+OR X2
+ANDN X3
+ANDND X4
+ANDGT DS100 DS101
+OUT Y1
+SET Y2
+RST Y3
+PD Y4
+
+NETWORK 2
+// Rung with range address coils (multiple outputs)
+// Matches demodata.js Rung 2 structure
+STR X11
+OR X12
+ANDN X13
+ANDND X14
+ANDGT DS200 DS201
+OUT Y100 Y110
+SET Y120 Y129
+RST Y130 Y135
+PD Y140 Y500
+
+NETWORK 3
+// Complex branching with nested OR/ANDSTR
+// Creates the multi-row branch structure (4 rows)
+// Use STRN/ORN for normally closed contacts (ncc)
+STRN T5
+ORN C1
+AND C2
+STR C3
+AND C4
+STR C5
+OR C6
+ANDSTR
+ORSTR
+STRE DS100 50
+ORPD C100
+ANDGT DS112 86
+ANDSTR
+SET C101
+
+NETWORK 4
+// Program control instructions (no input branch)
+// All instructions are outputs
+STR X42
+END
+ENDC
+RT
+RTC
+FOR 100 0
+NEXT
+CALL ExampleSubr
+
+NETWORK 5
+// Timer instructions
+STR X43
+TMR T499 10000 sec
+TMROFF T333 32767 hour
+
+NETWORK 6
+// Copy and data move instructions
+STR X44
+COPY 100 DS1 0
+CPYBLK DS10000 DS10001 DS10002 0
+FILL DS10000 DS10001 DS10002 0
+PACK C1900 C1915 DH1000 0
+UNPACK DH1000 C1900 C1915 0
+
+NETWORK 7
+// Find (search) instructions
+STR X45
+FINDEQ 1 DS9998 DS9999 DS10000 C2000 0
+FINDNE 1 DS9998 DS9999 DS10000 C2000 0
+FINDGT 1 DS9998 DS9999 DS10000 C2000 0
+FINDGE 1 DS9998 DS9999 DS10000 C2000 0
+FINDLT 1 DS9998 DS9999 DS10000 C2000 0
+FINDLE 1 DS9998 DS9999 DS10000 C2000 0
+
+NETWORK 8
+// Incremental find instructions
+STR X46
+FINDIEQ 1 DS9998 DS9999 DS10000 C2000 0
+FINDINE 1 DS9998 DS9999 DS10000 C2000 0
+FINDIGT 1 DS9998 DS9999 DS10000 C2000 0
+FINDIGE 1 DS9998 DS9999 DS10000 C2000 0
+FINDILT 1 DS9998 DS9999 DS10000 C2000 0
+FINDILE 1 DS9998 DS9999 DS10000 C2000 0
+
+NETWORK 9
+// Math instructions
+STR X47
+MATHDEC DS10000 1 + 1 0
+MATHHEX DH2000 1h + 1h 0
+SUM DS10000 DS9998 DS9999 0
+
+NETWORK 10
+// Double rung - up counter (2 input rows required)
+STR X1001
+STR X1002
+CNTU CT250 1
+
+NETWORK 11
+// Double rung - down counter
+STR X1101
+STR X1102
+CNTD CT250 1
+
+NETWORK 12
+// Triple rung - up/down counter (3 input rows required)
+// For triple rungs, use 3 STR instructions (no ANDSTR/ORSTR)
+STR X1003
+STRN X1203
+STR X1205
+UDC CT250 1
+
+NETWORK 13
+// Double rung - accumulating timer
+STR X1105
+STR X1106
+TMRA T251 DS1000 sec
+
+NETWORK 14
+// Triple rung - shift register
+// For triple rungs, use 3 STR instructions (no ANDSTR/ORSTR)
+STR X1006
+STRN X1306
+STR X1306
+SHFRG C250 C261
+
+NETWORK 15
+// Empty rung (contradictory logic - always off)
+STR SC1
+ANDN SC1
+
+NETWORK 16
+// Empty rung - shows empty rung handling

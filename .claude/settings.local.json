@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc:*)",
+      "mcp__lisp__quicklisp-search",
+      "mcp__lisp__quickload",
+      "mcp__lisp__evaluate-lisp",
+      "mcp__lisp__describe-symbol",
+      "mcp__lisp__compile-form",
+      "mcp__lisp__list-definitions",
+      "mcp__lisp__load-system",
+      "Bash(curl:*)",
+      "Bash(open:*)",
+      "Bash(screencapture:*)",
+      "Bash(echo:*)",
+      "Bash(osascript:*)",
+      "Bash(kill:*)",
+      "Bash(git -C ~/common-lisp/mblogic-clog status)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

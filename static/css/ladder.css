@@ -1,0 +1,213 @@
+/* Ladder Display CSS for MBLogic-CL */
+
+/* Monitor page buttons */
+.laddermonitorbuttons {
+    font-size: 125%;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.control-panel {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.btn-monitor, .btn-start, .btn-stop, .btn-step {
+    margin: 5px;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Subroutine selector */
+.subroutine-selector {
+    margin-top: 10px;
+}
+
+.subroutine-selector label {
+    margin-right: 10px;
+}
+
+.subroutine-selector select {
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Rung Number Area - KEY STYLING FOR RUNG DISPLAY */
+p.rungnumberarea {
+    width: auto;
+    background-color: olivedrab;
+    border-radius: 8px;
+    font-size: 115%;
+    font-weight: bold;
+    margin: 15px 0 5px 50px;
+    padding: 8px 15px;
+    border: 2px solid #555;
+    display: block;
+    color: white;
+    cursor: pointer;
+}
+
+p.rungnumberarea:hover {
+    background-color: #556b2f;
+    border-color: #333;
+}
+
+/* Comment Area */
+p.commentarea {
+    width: auto;
+    background-color: wheat;
+    border-radius: 8px;
+    margin: 5px 0 10px 50px;
+    padding: 8px 15px;
+    border: 1px solid #999;
+    display: block;
+    font-style: italic;
+    color: #333;
+}
+
+/* SVG Ladder Diagram Styling */
+#staticrunglist {
+    margin-top: 20px;
+}
+
+#staticrunglist svg {
+    display: block;
+    width: 100%;
+    max-width: 1200px;
+    margin: 10px 0;
+    border: 2px solid #333;
+    background-color: white;
+    page-break-inside: avoid;
+}
+
+/* SVG Line Elements */
+#staticrunglist svg line {
+    stroke: black;
+    stroke-width: 2;
+}
+
+/* SVG Circle Elements (junction points) */
+#staticrunglist svg circle {
+    stroke: black;
+    stroke-width: 2;
+    fill: black;
+}
+
+/* SVG Rectangle Elements (contact/coil boxes) */
+#staticrunglist svg rect {
+    stroke: black;
+    stroke-width: 1;
+    fill: none;
+}
+
+/* SVG Ellipse Elements (blocks) */
+#staticrunglist svg ellipse {
+    stroke: black;
+    stroke-width: 2;
+    fill: none;
+}
+
+/* SVG Text (addresses) */
+#staticrunglist svg text {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    fill: black;
+    text-anchor: middle;
+}
+
+/* Ladder styles for display */
+.ladderstyles {
+    stroke: blue;
+    stroke-width: 0.5px;
+}
+
+.ladderdisplaystyle {
+    stroke: blue;
+    stroke-width: 0.5px;
+    fill: whitesmoke;
+}
+
+/* Subroutine header */
+.sbrstyle {
+    stroke: black;
+    fill: lightgrey;
+    stroke-width: 1.0px;
+}
+
+/* Comments */
+.commentstyle {
+    stroke: black;
+    fill: wheat;
+}
+
+/* Rung style */
+.rungstyle {
+    stroke: black;
+    fill: olivedrab;
+}
+
+/* Monitoring colors */
+.MB_ladderoff {
+    stroke: blue;
+    stroke-width: 0.5px;
+}
+
+.MB_ladderon {
+    stroke: red;
+    stroke-width: 2.0px;
+}
+
+/* Rung container */
+#ladderdispprototype {
+    display: block;
+}
+
+/* Hide prototypes */
+#ladderprototypes {
+    display: none;
+}
+
+/* Edit cell styling */
+.emptyeditcell {
+    stroke: black;
+    stroke-width: 0.5px;
+}
+
+/* Page layout */
+body {
+    font-family: Arial, sans-serif;
+    margin: 10px;
+    padding: 10px;
+    background-color: #fff;
+}
+
+h1 {
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+}
+
+h2 {
+    color: #555;
+    margin-top: 20px;
+}
+
+/* Statistics display */
+#statistics {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: monospace;
+}
+
+#statistics p {
+    margin: 5px 0;
+}

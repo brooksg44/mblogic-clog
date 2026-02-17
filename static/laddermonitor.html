@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBLogic-CL Ladder Monitor</title>
+    <link rel="stylesheet" href="/css/ladder.css?v=2">
+</head>
+<body>
+    <h1>MBLogic-CL Ladder Monitor</h1>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <button id="btn-monitor" class="btn-monitor">Monitor</button>
+        <button id="btn-start" class="btn-start">Start</button>
+        <button id="btn-stop" class="btn-stop">Stop</button>
+        <button id="btn-step" class="btn-step">Single Scan</button>
+
+        <div class="subroutine-selector">
+            <label for="subr-select">Subroutine:</label>
+            <select id="subr-select">
+                <option value="main">main</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Status Panel -->
+    <div class="status-panel">
+        <div class="status-item">
+            <span class="status-label">Status</span>
+            <span id="status-running" class="status-value stopped">Stopped</span>
+        </div>
+        <div class="status-item">
+            <span class="status-label">Scan Count</span>
+            <span id="status-scan-count" class="status-value">0</span>
+        </div>
+        <div class="status-item">
+            <span class="status-label">Scan Time</span>
+            <span id="status-scan-time" class="status-value">0.00 ms</span>
+        </div>
+    </div>
+
+    <!-- Ladder Display Container -->
+    <div id="staticrunglist">
+        <h2 id="subroutinename" style="display: none;"></h2>
+        <p id="subrcomments" style="display: none;"></p>
+        <div class="loading">Loading program...</div>
+    </div>
+
+    <!-- Hidden SVG Prototypes - Complete Symbol Library -->
+    <div id="ladderprototypes" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" id="ladderdispprototype" version="1.1"  viewBox="0 0 1000 200" preserveAspectRatio="xMidYMid meet" style="display: none;">
+            <!-- Empty cell -->
+            <g id="none">
+                <rect x="2px" y="-35px" width="75px" height="75px" class="emptyeditcell"/>
+            </g>
+
+            <!-- Input Contacts -->
+            <g id="inputno">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="30px" y2="0px"/>
+                <line x1="45px" y1="0px" x2="75px" y2="0px"/>
+                <line x1="30px" y1="-15px" x2="30px" y2="15px"/>
+                <line x1="45px" y1="-15px" x2="45px" y2="15px"/>
+            </g>
+            <g id="inputnc">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="30px" y2="0px"/>
+                <line x1="45px" y1="0px" x2="75px" y2="0px"/>
+                <line x1="30px" y1="-15px" x2="30px" y2="15px"/>
+                <line x1="45px" y1="-15px" x2="45px" y2="15px"/>
+                <line x1="20px" y1="12px" x2="55px" y2="-12px"/>
+            </g>
+            <g id="inputnopd">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="30px" y2="0px"/>
+                <line x1="45px" y1="0px" x2="75px" y2="0px"/>
+                <line x1="30px" y1="-15px" x2="30px" y2="15px"/>
+                <line x1="45px" y1="-15px" x2="45px" y2="15px"/>
+                <line x1="37" y1="-10" x2="37" y2="10"/>
+                <line x1="37" y1="-10" x2="32" y2="-5"/>
+                <line x1="37" y1="-10" x2="41" y2="-5"/>
+            </g>
+            <g id="inputnond">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="30px" y2="0px"/>
+                <line x1="45px" y1="0px" x2="75px" y2="0px"/>
+                <line x1="30px" y1="-15px" x2="30px" y2="15px"/>
+                <line x1="45px" y1="-15px" x2="45px" y2="15px"/>
+                <line x1="37" y1="-10" x2="37" y2="10"/>
+                <line x1="37" y1="10" x2="32" y2="5"/>
+                <line x1="37" y1="10" x2="41" y2="5"/>
+            </g>
+
+            <!-- Comparison Contacts -->
+            <g id="inputcompeq">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0" y1="0" x2="25" y2="0"/>
+                <line x1="50" y1="0" x2="75" y2="0"/>
+                <line x1="25" y1="-15" x2="25" y2="15"/>
+                <line x1="50" y1="-15" x2="50" y2="15"/>
+                <line x1="30" y1="-4" x2="44" y2="-4"/>
+                <line x1="30" y1="4" x2="44" y2="4"/>
+            </g>
+            <g id="inputcompneq">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0" y1="0" x2="25" y2="0"/>
+                <line x1="50" y1="0" x2="75" y2="0"/>
+                <line x1="25" y1="-15" x2="25" y2="15"/>
+                <line x1="50" y1="-15" x2="50" y2="15"/>
+                <line x1="30" y1="-4" x2="44" y2="-4"/>
+                <line x1="30" y1="4" x2="44" y2="4"/>
+                <line x1="33" y1="10" x2="42" y2="-10"/>
+            </g>
+            <g id="inputcompgt">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0" y1="0" x2="25" y2="0"/>
+                <line x1="50" y1="0" x2="75" y2="0"/>
+                <line x1="25" y1="-15" x2="25" y2="15"/>
+                <line x1="50" y1="-15" x2="50" y2="15"/>
+                <line x1="30" y1="-5" x2="44" y2="0"/>
+                <line x1="30" y1="5" x2="44" y2="0"/>
+            </g>
+            <g id="inputcomplt">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0" y1="0" x2="25" y2="0"/>
+                <line x1="50" y1="0" x2="75" y2="0"/>
+                <line x1="25" y1="-15" x2="25" y2="15"/>
+                <line x1="50" y1="-15" x2="50" y2="15"/>
+                <line x1="30" y1="0" x2="44" y2="-5"/>
+                <line x1="30" y1="0" x2="44" y2="5"/>
+            </g>
+            <g id="inputcompge">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0" y1="0" x2="25" y2="0"/>
+                <line x1="50" y1="0" x2="75" y2="0"/>
+                <line x1="25" y1="-15" x2="25" y2="15"/>
+                <line x1="50" y1="-15" x2="50" y2="15"/>
+                <line x1="30" y1="-10" x2="44" y2="-5"/>
+                <line x1="30" y1="0" x2="44" y2="-5"/>
+                <line x1="30" y1="5" x2="44" y2="5"/>
+                <line x1="30" y1="10" x2="44" y2="10"/>
+            </g>
+            <g id="inputcomple">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0" y1="0" x2="25" y2="0"/>
+                <line x1="50" y1="0" x2="75" y2="0"/>
+                <line x1="25" y1="-15" x2="25" y2="15"/>
+                <line x1="50" y1="-15" x2="50" y2="15"/>
+                <line x1="30" y1="-5" x2="44" y2="-10"/>
+                <line x1="30" y1="-5" x2="44" y2="0"/>
+                <line x1="30" y1="5" x2="44" y2="5"/>
+                <line x1="30" y1="10" x2="44" y2="10"/>
+            </g>
+
+            <!-- Branch Instructions -->
+            <g id="brancht">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="75px" y2="0px"/>
+                <line x1="37px" y1="0px" x2="37px" y2="37px"/>
+                <circle cx="37px" cy="0px" r="3px" stroke-width="5px"/>
+            </g>
+            <g id="branchl">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="37px" y1="-37px" x2="37px" y2="0px"/>
+                <line x1="37px" y1="0px" x2="75px" y2="0px"/>
+            </g>
+            <g id="branchr">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="37px" y1="-37px" x2="37px" y2="0px"/>
+                <line x1="0px" y1="0px" x2="37px" y2="0px"/>
+            </g>
+            <g id="branchtl">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="37px" y1="-37px" x2="37px" y2="37px"/>
+                <line x1="0px" y1="0px" x2="37px" y2="0px"/>
+                <circle cx="37px" cy="0px" r="3px" stroke-width="5px"/>
+            </g>
+            <g id="branchtr">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="37px" y1="-37px" x2="37px" y2="37px"/>
+                <line x1="37px" y1="0px" x2="75px" y2="0px"/>
+                <circle cx="37px" cy="0px" r="3px" stroke-width="5px"/>
+            </g>
+            <g id="branchtu">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="37px" y1="-37px" x2="37px" y2="0px"/>
+                <line x1="0px" y1="0px" x2="75px" y2="0px"/>
+                <circle cx="37px" cy="0px" r="3px" stroke-width="5px"/>
+            </g>
+            <g id="branchx">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="37px" y1="-37px" x2="37px" y2="37px"/>
+                <line x1="0px" y1="0px" x2="75px" y2="0px"/>
+                <circle cx="37px" cy="0px" r="3px" stroke-width="5px"/>
+            </g>
+            <g id="branchttl">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="37px" y1="0px" x2="75px" y2="0px"/>
+                <line x1="37px" y1="0px" x2="37px" y2="37px"/>
+                <line x1="0px" y1="0px" x2="37px" y2="0px"/>
+                <circle cx="37px" cy="0px" r="3px" stroke-width="5px"/>
+            </g>
+            <g id="branchttr">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="37px" y2="0px"/>
+                <line x1="37px" y1="0px" x2="37px" y2="37px"/>
+                <line x1="37px" y1="0px" x2="75px" y2="0px"/>
+                <circle cx="37px" cy="0px" r="3px" stroke-width="5px"/>
+            </g>
+            <g id="vbarl">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="20px" y1="-37px" x2="20px" y2="37px"/>
+            </g>
+            <g id="vbarr">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="55px" y1="-37px" x2="55px" y2="37px"/>
+            </g>
+            <g id="vbar">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="37px" y1="-37px" x2="37px" y2="37px"/>
+            </g>
+            <g id="hbar">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="75px" y2="0px"/>
+            </g>
+
+            <!-- Output Coils -->
+            <g id="outputout">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="17px" y2="0px"/>
+                <line x1="57px" y1="0px" x2="225px" y2="0px"/>
+                <ellipse cx="37px" cy="0px" rx="20px" ry="12px" fill="none"/>
+                <text x="37px" y="5px" font-size="12" text-anchor="middle">OUT</text>
+            </g>
+            <g id="outputset">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="17px" y2="0px"/>
+                <line x1="57px" y1="0px" x2="225px" y2="0px"/>
+                <ellipse cx="37px" cy="0px" rx="20px" ry="12px" fill="none"/>
+                <text x="37px" y="5px" font-size="12" text-anchor="middle">SET</text>
+            </g>
+            <g id="outputreset">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="17px" y2="0px"/>
+                <line x1="57px" y1="0px" x2="225px" y2="0px"/>
+                <ellipse cx="37px" cy="0px" rx="20px" ry="12px" fill="none"/>
+                <text x="37px" y="5px" font-size="12" text-anchor="middle">RST</text>
+            </g>
+            <g id="outputpd">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="17px" y2="0px"/>
+                <line x1="57px" y1="0px" x2="225px" y2="0px"/>
+                <ellipse cx="37px" cy="0px" rx="20px" ry="12px" fill="none"/>
+                <text x="37px" y="5px" font-size="12" text-anchor="middle">PD</text>
+            </g>
+            <g id="outputout2">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="17px" y2="0px"/>
+                <line x1="57px" y1="0px" x2="225px" y2="0px"/>
+                <ellipse cx="37px" cy="0px" rx="20px" ry="12px" fill="none"/>
+                <text x="37px" y="5px" font-size="12" text-anchor="middle">OUT</text>
+                <text x="65px" y="-20px" font-size="12">...</text>
+            </g>
+            <g id="outputset2">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="17px" y2="0px"/>
+                <line x1="57px" y1="0px" x2="225px" y2="0px"/>
+                <ellipse cx="37px" cy="0px" rx="20px" ry="12px" fill="none"/>
+                <text x="37px" y="5px" font-size="12" text-anchor="middle">SET</text>
+                <text x="65px" y="-20px" font-size="12">...</text>
+            </g>
+            <g id="outputreset2">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="17px" y2="0px"/>
+                <line x1="57px" y1="0px" x2="225px" y2="0px"/>
+                <ellipse cx="37px" cy="0px" rx="20px" ry="12px" fill="none"/>
+                <text x="37px" y="5px" font-size="12" text-anchor="middle">RST</text>
+                <text x="65px" y="-20px" font-size="12">...</text>
+            </g>
+            <g id="outputpd2">
+                <rect x="2px" y="-35px" width="70px" height="70px" stroke="none"/>
+                <line x1="0px" y1="0px" x2="17px" y2="0px"/>
+                <line x1="57px" y1="0px" x2="225px" y2="0px"/>
+                <ellipse cx="37px" cy="0px" rx="20px" ry="12px" fill="none"/>
+                <text x="37px" y="5px" font-size="12" text-anchor="middle">PD</text>
+                <text x="65px" y="-20px" font-size="12">...</text>
+            </g>
+
+            <!-- Program Control -->
+            <g id="progcontrolend">
+                <rect x="2px" y="-35px" width="150px" height="70px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="145" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="140" height="45" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">END</text>
+            </g>
+            <g id="progcontrolendc">
+                <rect x="2px" y="-35px" width="150px" height="70px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="145" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="140" height="45" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">ENDC</text>
+            </g>
+            <g id="progcontrolrt">
+                <rect x="2px" y="-35px" width="150px" height="70px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="145" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="140" height="45" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">RT</text>
+            </g>
+            <g id="progcontrolrtc">
+                <rect x="2px" y="-35px" width="150px" height="70px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="145" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="140" height="45" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">RTC</text>
+            </g>
+            <g id="progcontrolcall">
+                <rect x="2px" y="-35px" width="225px" height="70px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="45" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">CALL</text>
+            </g>
+            <text id="calltext" x="15" y="10" font-size="12"> </text>
+            <g id="progcontrolfor">
+                <rect x="2px" y="-35px" width="150px" height="70px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="145" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="140" height="45" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">FOR</text>
+                <text x="125" y="-10" font-size="12">:</text>
+            </g>
+            <text id="fortext1a" x="15" y="10" font-size="12"> </text>
+            <text id="fortext1b" x="130" y="-10" font-size="12"> </text>
+            <g id="progcontrolnext">
+                <rect x="2px" y="-35px" width="150px" height="70px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="145" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="140" height="45" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">NEXT</text>
+            </g>
+
+            <!-- Counters/Timers -->
+            <g id="timercntu">
+                <rect x="2px" y="-35px" width="225px" height="150px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <line x1="0" y1="75" x2="5" y2="75"/>
+                <rect x="5" y="-30" width="215" height="140" rx="5" fill="none"/>
+                <text x="50" y="-10" font-size="12">UP COUNTER</text>
+                <text x="10" y="0" font-size="12">Up</text>
+                <text x="10" y="75" font-size="12">Reset</text>
+                <text x="50" y="30" font-size="12">Counter:</text>
+                <text x="50" y="50" font-size="12">Set-point:</text>
+            </g>
+            <text id="countertext1a" x="125" y="30" font-size="12"> </text>
+            <text id="countertext1b" x="125" y="50" font-size="12"> </text>
+            <g id="timercntd">
+                <rect x="2px" y="-35px" width="225px" height="150px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <line x1="0" y1="75" x2="5" y2="75"/>
+                <rect x="5" y="-30" width="215" height="140" rx="5" fill="none"/>
+                <text x="50" y="-10" font-size="12">DOWN COUNTER</text>
+                <text x="10" y="0" font-size="12">Down</text>
+                <text x="10" y="75" font-size="12">Reset</text>
+                <text x="50" y="30" font-size="12">Counter:</text>
+                <text x="50" y="50" font-size="12">Set-point:</text>
+            </g>
+            <g id="timerudc">
+                <rect x="2px" y="-35px" width="225px" height="225px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <line x1="0" y1="75" x2="5" y2="75"/>
+                <line x1="0" y1="150" x2="5" y2="150"/>
+                <rect x="5" y="-30" width="215" height="200" rx="5" fill="none"/>
+                <text x="50" y="-10" font-size="12">UP-DOWN COUNTER</text>
+                <text x="10" y="0" font-size="12">Up</text>
+                <text x="10" y="75" font-size="12">Down</text>
+                <text x="10" y="150" font-size="12">Reset</text>
+                <text x="50" y="30" font-size="12">Counter:</text>
+                <text x="50" y="50" font-size="12">Set-point:</text>
+            </g>
+            <g id="timertmra">
+                <rect x="2px" y="-35px" width="225px" height="150px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <line x1="0" y1="75" x2="5" y2="75"/>
+                <rect x="5" y="-30" width="215" height="140" rx="5" fill="none"/>
+                <text x="50" y="-10" font-size="12">TIMER Retentive</text>
+                <text x="10" y="0" font-size="12">Enable</text>
+                <text x="10" y="75" font-size="12">Reset</text>
+                <text x="50" y="20" font-size="12">Timer:</text>
+                <text x="50" y="40" font-size="12">Set point:</text>
+                <text x="50" y="60" font-size="12">Time base:</text>
+            </g>
+            <text id="tmratext1a" x="125" y="20" font-size="12"> </text>
+            <text id="tmratext1b" x="125" y="40" font-size="12"> </text>
+            <text id="tmratext1c" x="125" y="60" font-size="12"> </text>
+            <g id="timertmr">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">TIMER On-Delay</text>
+                <text x="150" y="-10" font-size="12">:</text>
+                <text x="10" y="10" font-size="12">Set point:</text>
+                <text x="150" y="10" font-size="12">:</text>
+            </g>
+            <g id="timertmroff">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">TIMER Off-Delay</text>
+                <text x="150" y="-10" font-size="12">:</text>
+                <text x="10" y="10" font-size="12">Set point:</text>
+                <text x="150" y="10" font-size="12">:</text>
+            </g>
+            <text id="timertext1a" x="160" y="-10" font-size="12"> </text>
+            <text id="timertext1b" x="80" y="10" font-size="12"> </text>
+            <text id="timertext1c" x="160" y="10" font-size="12"> </text>
+
+            <!-- Data Movement -->
+            <g id="copy">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">COPY Single</text>
+                <text x="8" y="6" font-size="12">Src:</text>
+                <text x="8" y="24" font-size="12">Des:</text>
+                <text x="190" y="-10" font-size="12">:</text>
+            </g>
+            <text id="copytext1a" x="40" y="6" font-size="12"> </text>
+            <text id="copytext1b" x="40" y="24" font-size="12"> </text>
+            <text id="copytext1c" x="200" y="-10" font-size="12"> </text>
+            <g id="cpyblk">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">COPY Block</text>
+                <text x="8" y="6" font-size="12">Src:</text>
+                <text x="8" y="24" font-size="12">Des:</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="6" font-size="12">...</text>
+            </g>
+            <text id="cpyblktext1a" x="40" y="6" font-size="12"> </text>
+            <text id="cpyblktext1b" x="130" y="6" font-size="12"> </text>
+            <text id="cpyblktext1c" x="40" y="24" font-size="12"> </text>
+            <text id="cpyblktext1d" x="200" y="-10" font-size="12"> </text>
+            <g id="fill">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">COPY Fill</text>
+                <text x="8" y="6" font-size="12">Src:</text>
+                <text x="8" y="24" font-size="12">Des:</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="24" font-size="12">...</text>
+            </g>
+            <text id="filltext1a" x="40" y="6" font-size="12"> </text>
+            <text id="filltext1b" x="40" y="24" font-size="12"> </text>
+            <text id="filltext1c" x="130" y="24" font-size="12"> </text>
+            <text id="filltext1d" x="200" y="-10" font-size="12"> </text>
+            <g id="pack">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">COPY Pack</text>
+                <text x="8" y="6" font-size="12">Src:</text>
+                <text x="8" y="24" font-size="12">Des:</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="6" font-size="12">...</text>
+            </g>
+            <text id="packtext1a" x="40" y="6" font-size="12"> </text>
+            <text id="packtext1b" x="130" y="6" font-size="12"> </text>
+            <text id="packtext1c" x="40" y="24" font-size="12"> </text>
+            <text id="packtext1d" x="200" y="-10" font-size="12"> </text>
+            <g id="unpack">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">COPY Unpack</text>
+                <text x="8" y="6" font-size="12">Src:</text>
+                <text x="8" y="24" font-size="12">Des:</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="24" font-size="12">...</text>
+            </g>
+            <text id="unpacktext1a" x="40" y="6" font-size="12"> </text>
+            <text id="unpacktext1b" x="40" y="24" font-size="12"> </text>
+            <text id="unpacktext1c" x="130" y="24" font-size="12"> </text>
+            <text id="unpacktext1d" x="200" y="-10" font-size="12"> </text>
+
+            <!-- Find/Search -->
+            <g id="findeq">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">FIND =</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="10" font-size="12">...</text>
+                <text x="8" y="10" font-size="12">Rng:</text>
+                <text x="8" y="30" font-size="12">Rlts:</text>
+            </g>
+            <text id="findtext1a" x="80" y="-10" font-size="12"> </text>
+            <text id="findtext1b" x="40" y="10" font-size="12"> </text>
+            <text id="findtext1c" x="130" y="10" font-size="12"> </text>
+            <text id="findtext1d" x="40" y="30" font-size="12"> </text>
+            <text id="findtext1e" x="130" y="30" font-size="12"> </text>
+            <text id="findtext1f" x="200" y="-10" font-size="12"> </text>
+            <g id="findne">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">FIND !=</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="10" font-size="12">...</text>
+                <text x="8" y="10" font-size="12">Rng:</text>
+                <text x="8" y="30" font-size="12">Rlts:</text>
+            </g>
+            <g id="findlt">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">FIND &lt;</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="10" font-size="12">...</text>
+                <text x="8" y="10" font-size="12">Rng:</text>
+                <text x="8" y="30" font-size="12">Rlts:</text>
+            </g>
+            <g id="findle">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">FIND &lt;=</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="10" font-size="12">...</text>
+                <text x="8" y="10" font-size="12">Rng:</text>
+                <text x="8" y="30" font-size="12">Rlts:</text>
+            </g>
+            <g id="findgt">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">FIND &gt;</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="10" font-size="12">...</text>
+                <text x="8" y="10" font-size="12">Rng:</text>
+                <text x="8" y="30" font-size="12">Rlts:</text>
+            </g>
+            <g id="findge">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">FIND &gt;=</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="10" font-size="12">...</text>
+                <text x="8" y="10" font-size="12">Rng:</text>
+                <text x="8" y="30" font-size="12">Rlts:</text>
+            </g>
+            <g id="findieq">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">FINDI =</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="10" font-size="12">...</text>
+                <text x="8" y="10" font-size="12">Rng:</text>
+                <text x="8" y="30" font-size="12">Rlts:</text>
+            </g>
+            <g id="findine">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">FINDI !=</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="10" font-size="12">...</text>
+                <text x="8" y="10" font-size="12">Rng:</text>
+                <text x="8" y="30" font-size="12">Rlts:</text>
+            </g>
+            <g id="findigt">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">FINDI &gt;</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="10" font-size="12">...</text>
+                <text x="8" y="10" font-size="12">Rng:</text>
+                <text x="8" y="30" font-size="12">Rlts:</text>
+            </g>
+            <g id="findige">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">FINDI &gt;=</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="10" font-size="12">...</text>
+                <text x="8" y="10" font-size="12">Rng:</text>
+                <text x="8" y="30" font-size="12">Rlts:</text>
+            </g>
+            <g id="findilt">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">FINDI &lt;</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="10" font-size="12">...</text>
+                <text x="8" y="10" font-size="12">Rng:</text>
+                <text x="8" y="30" font-size="12">Rlts:</text>
+            </g>
+            <g id="findile">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">FINDI &lt;=</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="110" y="10" font-size="12">...</text>
+                <text x="8" y="10" font-size="12">Rng:</text>
+                <text x="8" y="30" font-size="12">Rlts:</text>
+            </g>
+
+            <!-- Shift Register -->
+            <g id="shfrg">
+                <rect x="2px" y="-35px" width="225px" height="210px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <line x1="0" y1="75" x2="5" y2="75"/>
+                <line x1="0" y1="150" x2="5" y2="150"/>
+                <rect x="5" y="-30" width="215" height="200" rx="5" fill="none"/>
+                <text x="50" y="-10" font-size="12">SHIFT REGISTER</text>
+                <text x="10" y="0" font-size="12">Data</text>
+                <text x="10" y="75" font-size="12">Clock</text>
+                <text x="10" y="150" font-size="12">Reset</text>
+                <text x="50" y="30" font-size="12">Start:</text>
+                <text x="50" y="50" font-size="12">End:</text>
+            </g>
+            <text id="shfrgtext1a" x="100" y="30" font-size="12"> </text>
+            <text id="shfrgtext1b" x="100" y="50" font-size="12"> </text>
+
+            <!-- Math Instructions -->
+            <g id="mathdec">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">MATHDEC</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="70" y="10" font-size="12">=</text>
+            </g>
+            <text id="mathtext1a" x="8" y="10" font-size="12"> </text>
+            <text id="mathtext1b" x="8" y="28" font-size="12"> </text>
+            <text id="mathtext1c" x="200" y="-10" font-size="12"> </text>
+            <g id="mathhex">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">MATHHEX</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="70" y="10" font-size="12">=</text>
+            </g>
+            <g id="sum">
+                <rect x="2px" y="-35px" width="225px" height="75px" stroke="none"/>
+                <line x1="0" y1="0" x2="5" y2="0"/>
+                <line x1="220" y1="0" x2="225" y2="0"/>
+                <rect x="5" y="-30" width="215" height="65" rx="5" fill="none"/>
+                <text x="10" y="-10" font-size="12">SUM</text>
+                <text x="190" y="-10" font-size="12">:</text>
+                <text x="70" y="10" font-size="12">=</text>
+                <text x="140" y="10" font-size="12">...</text>
+            </g>
+            <text id="sumtext1a" x="8" y="10" font-size="12"> </text>
+            <text id="sumtext1b" x="85" y="10" font-size="12"> </text>
+            <text id="sumtext1c" x="160" y="10" font-size="12"> </text>
+            <text id="sumtext1d" x="200" y="-10" font-size="12"> </text>
+
+            <!-- Address display templates -->
+            <text id="inptext1" x="15px" y="-20px" font-size="14"> </text>
+            <text id="inptext2a" x="8px" y="-20px" font-size="12"> </text>
+            <text id="inptext2b" x="8px" y="30px" font-size="12"> </text>
+            <text id="coiltext2a" x="15px" y="-20px" font-size="12"> </text>
+            <text id="coiltext2b" x="85px" y="-20px" font-size="12"> </text>
+            <text id="outptext1" x="15px" y="-20px" font-size="14"> </text>
+
+            <!-- Rung container -->
+            <g id="laddercontainer" transform="translate(0,50)"></g>
+
+            <!-- Power rails -->
+            <line id="svginprail1" x1="610" y1="0px" x2="610" y2="0px"/>
+            <line id="svginprail2" x1="610" y1="75px" x2="610" y2="75px"/>
+            <line id="svginprail3" x1="610" y1="150px" x2="610" y2="150px"/>
+            <line id="svgoutprail" x1="610" y1="0px" x2="610" y2="0px"/>
+            <circle id="svgoutraildecoration" cx="610px" cy="0px" r="3px" stroke-width="5px"/>
+
+            <!-- Edit cell container -->
+            <g id="cellcontainer"></g>
+        </svg>
+    </div>
+
+    <!-- JavaScript Files (cache-bust v2) -->
+    <script src="/js/servercomm.js?v=2"></script>
+    <script src="/js/ladsymbols.js?v=2"></script>
+    <script src="/js/ladsubrdisplib.js?v=2"></script>
+    <script src="/js/ladmonitor.js?v=2"></script>
+</body>
+</html>
