@@ -4,15 +4,34 @@
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PIDFILE="$SCRIPT_DIR/.mblogic-clog.pid"
 LOGFILE="$SCRIPT_DIR/mblogic-clog.log"
-STARTUP_SCRIPT="$SCRIPT_DIR/start-web-server-demo.lisp"
+GENERIC_SCRIPT="$SCRIPT_DIR/start-web-server-generic.lisp"
+
+# Optional second argument: IL file path (relative to project root or absolute)
+# Default: test/demodataprog.txt
+IL_ARG="${2:-}"
+if [ -z "$IL_ARG" ]; then
+    IL_FILE="$SCRIPT_DIR/test/demodataprog.txt"
+elif [[ "$IL_ARG" = /* ]]; then
+    IL_FILE="$IL_ARG"
+else
+    IL_FILE="$SCRIPT_DIR/$IL_ARG"
+fi
 
 usage() {
-    echo "Usage: $0 {start|stop|restart|status}"
+    echo "Usage: $0 {start|stop|restart|status} [IL_FILE]"
     echo ""
-    echo "  start    Start the web server (http://localhost:8080)"
-    echo "  stop     Stop the web server"
-    echo "  restart  Stop then start"
-    echo "  status   Show whether the server is running"
+    echo "  start [FILE]  Start the web server with optional IL program file"
+    echo "  stop          Stop the web server"
+    echo "  restart [FILE] Stop then start"
+    echo "  status        Show whether the server is running"
+    echo ""
+    echo "  FILE: path to IL program (relative to project root or absolute)"
+    echo "        default: test/demodataprog.txt"
+    echo ""
+    echo "  Examples:"
+    echo "    $0 start"
+    echo "    $0 start test/plcprog.txt"
+    echo "    $0 start /path/to/myprogram.txt"
     exit 1
 }
 
@@ -33,8 +52,9 @@ cmd_start() {
         exit 0
     fi
 
-    echo "Starting MBLogic-CLOG web server..."
-    sbcl --load "$STARTUP_SCRIPT" >> "$LOGFILE" 2>&1 &
+    echo "Starting MBLogic-CLOG web server with: $IL_FILE"
+    sbcl --eval "(defvar *il-file* \"$IL_FILE\")" \
+         --load "$GENERIC_SCRIPT" >> "$LOGFILE" 2>&1 &
     local pid=$!
     echo "$pid" > "$PIDFILE"
 
