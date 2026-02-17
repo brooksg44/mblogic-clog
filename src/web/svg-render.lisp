@@ -54,6 +54,11 @@
     ("set"      . "outputset")
     ("rst"      . "outputreset")
     ("pd"       . "outputpd")
+    ;; Range address output coils (same prototypes as single coils)
+    ("out2"     . "outputout")
+    ("set2"     . "outputset")
+    ("rst2"     . "outputreset")
+    ("pd2"      . "outputpd")
     ;; Timers
     ("tmr"      . "timertmr")
     ("tmra"     . "timertmra")
@@ -186,7 +191,16 @@
          (view-top (- (+ +sym-top+ +addr-margin+)))
          (view-height (+ +addr-margin+ +sym-top+
                          (* (max 1 rows) +cell-h+)
-                         +sym-bot+)))
+                         +sym-bot+))
+         ;; Column index where the coil zone begins (= contact matrix width)
+         (global-max-cols (/ (- svg-width 150) +cell-w+))
+         ;; This rung's own contact zone width
+         (rung-cols (ladder-rung-cols rung))
+         ;; Coil cells for wire routing
+         (coil-cells (remove-if-not (lambda (c) (eq (ladder-cell-type c) :coil)) cells))
+         (max-coil-row (if coil-cells
+                           (reduce #'max coil-cells :key #'ladder-cell-row :initial-value 0)
+                           -1)))
     (with-output-to-string (s)
       ;; SVG element
       (format s "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 ~D ~D ~D\">"
@@ -201,13 +215,26 @@
         (format s "<line x1=\"0\" y1=\"~D\" x2=\"0\" y2=\"~D\" stroke=\"black\" stroke-width=\"3\"/>"
                 rail-top rail-bot))
 
+      ;; Wire extension: row-0 wire from end of contact zone to coil zone
+      (when (and coil-cells (< rung-cols global-max-cols))
+        (format s "<line x1=\"~D\" y1=\"0\" x2=\"~D\" y2=\"0\" stroke=\"black\" stroke-width=\"2\"/>"
+                (cell-x rung-cols) (cell-x global-max-cols)))
+
+      ;; Vertical coil bus: connects stacked coils on their left side
+      (when (> max-coil-row 0)
+        (format s "<line x1=\"~D\" y1=\"0\" x2=\"~D\" y2=\"~D\" stroke=\"black\" stroke-width=\"2\"/>"
+                (cell-x global-max-cols) (cell-x global-max-cols) (cell-y max-coil-row)))
+
       ;; Render each cell
       (dolist (cell cells)
         (let* ((sym (ladder-cell-symbol cell))
                (svg-id (get-svg-id sym))
                (row (ladder-cell-row cell))
                (col (ladder-cell-col cell))
-               (x (cell-x col))
+               ;; Coil cells render at the far-right coil zone; others at their column
+               (x (if (eq (ladder-cell-type cell) :coil)
+                      (cell-x global-max-cols)
+                      (cell-x col)))
                (y (cell-y row))
                (css-class (if address-values (monitor-class cell address-values) ""))
                (addr (ladder-cell-address cell))
