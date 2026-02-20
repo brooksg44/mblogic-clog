@@ -931,21 +931,36 @@
                              ((= row-idx 0)
                                (let ((hbar (make-hbar-cell :row row-idx :col col-idx)))
                                  (push hbar input-cells)))
-                             ;; Nil in branch row BETWEEN non-branch cells
-                             ;; Only fill if there's a non-branch cell both before AND after
+                             ;; Nil in branch row - complex rules:
+                             ;; 1. Don't fill gaps between right-side (└├┌) and left-side (┘┤┐) connectors
+                             ;; 2. Fill gaps between non-branch cells for wire continuity
                              ((let ((has-earlier-non-branch nil)
-                                    (has-later-cell nil))
-                                ;; Check for non-branch, non-nil cell before this position
+                                    (has-later-cell nil)
+                                    (has-right-connector-before nil)
+                                    (has-left-connector-after nil))
+                                ;; Check earlier cells
                                 (loop for earlier-col from 0 below col-idx
                                       for earlier-cell = (nth earlier-col row)
-                                      when (and earlier-cell
-                                                (not (branch-symbol-p (ladder-cell-symbol earlier-cell))))
-                                      do (setf has-earlier-non-branch t) (return))
-                                ;; Check for non-nil cell after this position
+                                      when earlier-cell
+                                      do (let ((sym (ladder-cell-symbol earlier-cell)))
+                                           (when (not (branch-symbol-p sym))
+                                             (setf has-earlier-non-branch t))
+                                           (when (member sym (list *branch-l* *branch-tl* *branch-ttl*)
+                                                         :test #'string-equal)
+                                             (setf has-right-connector-before t))))
+                                ;; Check later cells
                                 (loop for later-col from (1+ col-idx) below (length row)
-                                      when (nth later-col row)
-                                      do (setf has-later-cell t) (return))
-                                (and has-earlier-non-branch has-later-cell))
+                                      for later-cell = (nth later-col row)
+                                      when later-cell
+                                      do (setf has-later-cell t)
+                                         (let ((sym (ladder-cell-symbol later-cell)))
+                                           (when (member sym (list *branch-r* *branch-tr* *branch-ttr*)
+                                                         :test #'string-equal)
+                                             (setf has-left-connector-after t))))
+                                ;; Fill if: has earlier non-branch AND later cell AND NOT in gap
+                                (and has-earlier-non-branch
+                                     has-later-cell
+                                     (not (and has-right-connector-before has-left-connector-after))))
                                (let ((hbar (make-hbar-cell :row row-idx :col col-idx)))
                                  (push hbar input-cells))))))
 
