@@ -931,13 +931,19 @@
                              ((= row-idx 0)
                                (let ((hbar (make-hbar-cell :row row-idx :col col-idx)))
                                  (push hbar input-cells)))
-                             ;; Nil in branch row before first non-nil in that row
-                             ;; Check if there's any cell in this row at a later column
-                             ((let ((has-later-cell nil))
+                             ;; Nil in branch row BETWEEN cells (not before first cell)
+                             ;; Only fill if there's a cell both before AND after this position
+                             ((let ((has-earlier-cell nil)
+                                    (has-later-cell nil))
+                                ;; Check for non-nil cell before this position
+                                (loop for earlier-col from 0 below col-idx
+                                      when (nth earlier-col row)
+                                      do (setf has-earlier-cell t) (return))
+                                ;; Check for non-nil cell after this position
                                 (loop for later-col from (1+ col-idx) below (length row)
-                                        when (nth later-col row)
+                                      when (nth later-col row)
                                       do (setf has-later-cell t) (return))
-                                has-later-cell)
+                                (and has-earlier-cell has-later-cell))
                                (let ((hbar (make-hbar-cell :row row-idx :col col-idx)))
                                  (push hbar input-cells))))))
 
