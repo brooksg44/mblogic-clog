@@ -931,19 +931,21 @@
                              ((= row-idx 0)
                                (let ((hbar (make-hbar-cell :row row-idx :col col-idx)))
                                  (push hbar input-cells)))
-                             ;; Nil in branch row BETWEEN cells (not before first cell)
-                             ;; Only fill if there's a cell both before AND after this position
-                             ((let ((has-earlier-cell nil)
+                             ;; Nil in branch row BETWEEN non-branch cells
+                             ;; Only fill if there's a non-branch cell both before AND after
+                             ((let ((has-earlier-non-branch nil)
                                     (has-later-cell nil))
-                                ;; Check for non-nil cell before this position
+                                ;; Check for non-branch, non-nil cell before this position
                                 (loop for earlier-col from 0 below col-idx
-                                      when (nth earlier-col row)
-                                      do (setf has-earlier-cell t) (return))
+                                      for earlier-cell = (nth earlier-col row)
+                                      when (and earlier-cell
+                                                (not (branch-symbol-p (ladder-cell-symbol earlier-cell))))
+                                      do (setf has-earlier-non-branch t) (return))
                                 ;; Check for non-nil cell after this position
                                 (loop for later-col from (1+ col-idx) below (length row)
                                       when (nth later-col row)
                                       do (setf has-later-cell t) (return))
-                                (and has-earlier-cell has-later-cell))
+                                (and has-earlier-non-branch has-later-cell))
                                (let ((hbar (make-hbar-cell :row row-idx :col col-idx)))
                                  (push hbar input-cells))))))
 
