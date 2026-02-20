@@ -188,10 +188,22 @@
          ;; Output zone is 225px wide (to accommodate wide blocks like COPY, TMR, etc.)
          (svg-width (or fixed-width
                         (+ (* (+ (rung-max-col rung) 1) +cell-w+) 225)))
-         ;; Height: top margin + rows + bottom margin
+         ;; Height: account for multi-row blocks (counters, timers, shift registers)
+         ;; that are 2-3 rows tall (150px or 225px) instead of the standard 75px
+         (block-height-rows (lambda (sym)
+                              (cond
+                                ((member sym '("cntu" "cntd" "tmra") :test #'string-equal) 2)
+                                ((member sym '("udc" "shfrg") :test #'string-equal) 3)
+                                (t 1))))
+         (max-row-extent (if cells
+                             (loop for cell in cells
+                                   maximize (+ (ladder-cell-row cell)
+                                               (funcall block-height-rows
+                                                        (ladder-cell-symbol cell))))
+                             1))
          (view-top (- (+ +sym-top+ +addr-margin+)))
          (view-height (+ +addr-margin+ +sym-top+
-                         (* (max 1 rows) +cell-h+)
+                         (* (max 1 max-row-extent) +cell-h+)
                          +sym-bot+))
          ;; Column index where the coil zone begins (= contact matrix width)
          (global-max-cols (/ (- svg-width 225) +cell-w+))
