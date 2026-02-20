@@ -931,41 +931,11 @@
                              ((= row-idx 0)
                                (let ((hbar (make-hbar-cell :row row-idx :col col-idx)))
                                  (push hbar input-cells)))
-                             ;; Nil in branch row - check immediate neighbors for gap detection
-                             ;; Don't fill if between right-side (└├┌) and left-side (┘┤┐) connectors
-                             ((let ((prev-non-nil nil)
-                                    (next-non-nil nil)
-                                    (has-earlier-non-branch nil))
-                                ;; Find immediate previous non-nil cell
-                                (loop for earlier-col from (1- col-idx) downto 0
-                                      for earlier-cell = (nth earlier-col row)
-                                      when earlier-cell
-                                      do (setf prev-non-nil earlier-cell) (return))
-                                ;; Find immediate next non-nil cell
-                                (loop for later-col from (1+ col-idx) below (length row)
-                                      for later-cell = (nth later-col row)
-                                      when later-cell
-                                      do (setf next-non-nil later-cell) (return))
-                                ;; Check if any earlier cell is non-branch
-                                (loop for earlier-col from 0 below col-idx
-                                      for earlier-cell = (nth earlier-col row)
-                                      when (and earlier-cell
-                                                (not (branch-symbol-p (ladder-cell-symbol earlier-cell))))
-                                      do (setf has-earlier-non-branch t) (return))
-                                ;; Fill if: has earlier non-branch, has next cell,
-                                ;; AND NOT (prev is right-connector AND next is left-connector)
-                                (and has-earlier-non-branch
-                                     next-non-nil
-                                     (not (and prev-non-nil
-                                               next-non-nil
-                                               (member (ladder-cell-symbol prev-non-nil)
-                                                       (list *branch-l* *branch-tl* *branch-ttl*)
-                                                       :test #'string-equal)
-                                               (member (ladder-cell-symbol next-non-nil)
-                                                       (list *branch-r* *branch-tr* *branch-ttr*)
-                                                       :test #'string-equal)))))
-                               (let ((hbar (make-hbar-cell :row row-idx :col col-idx)))
-                                 (push hbar input-cells))))))
+                             ;; Nil in branch rows - don't fill at all
+                             ;; Only row 0 gets automatic hbar filling
+                             ;; Branch rows keep their structure explicit from matrix operations
+                             (t
+                               nil))))
 
           ;; Build the rung (no longer needs branch metadata - it's in the cells)
           (make-ladder-rung
