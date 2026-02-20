@@ -185,15 +185,16 @@
   (let* ((rows (ladder-rung-rows rung))
          (cells (ladder-rung-cells rung))
          ;; Width: use fixed-width if supplied, otherwise compute from this rung's cells
+         ;; Output zone is 225px wide (to accommodate wide blocks like COPY, TMR, etc.)
          (svg-width (or fixed-width
-                        (+ (* (+ (rung-max-col rung) 1) +cell-w+) 150)))
+                        (+ (* (+ (rung-max-col rung) 1) +cell-w+) 225)))
          ;; Height: top margin + rows + bottom margin
          (view-top (- (+ +sym-top+ +addr-margin+)))
          (view-height (+ +addr-margin+ +sym-top+
                          (* (max 1 rows) +cell-h+)
                          +sym-bot+))
          ;; Column index where the coil zone begins (= contact matrix width)
-         (global-max-cols (/ (- svg-width 150) +cell-w+))
+         (global-max-cols (/ (- svg-width 225) +cell-w+))
          ;; This rung's own contact zone width
          (rung-cols (ladder-rung-cols rung))
          ;; Output-zone cells (coils and control instructions) for wire routing
@@ -283,7 +284,7 @@
             (format s "<p>No rungs in this subroutine.</p>")
             ;; Compute uniform width from the widest rung in the program
             (let* ((max-col (reduce #'max rungs :key #'rung-max-col :initial-value 0))
-                   (uniform-width (+ (* (+ max-col 1) +cell-w+) 150)))
+                   (uniform-width (+ (* (+ max-col 1) +cell-w+) 225)))
               (dolist (rung rungs)
                 ;; Rung number header
                 (format s "<p class=\"rungnumberarea\">Rung ~D</p>"
