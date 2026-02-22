@@ -1,0 +1,34 @@
+# ocicl package manager
+ocicl/
+
+# Process ID files
+*.pid
+.*.pid
+
+# Log files
+*.log
+
+# Compiled Lisp files
+*.fasl
+*.fas
+*.lib
+*.dx64fsl
+*.lx64fsl
+
+# Editor tags
+tags
+TAGS
+
+# Common Lisp temporary files
+*.x86f
+*.sse2f
+*.lx32fsl
+*.lx64fsl
+*.dx32fsl
+*.dx64fsl
+*.pfsl
+*.dfsl
+*.ppcf
+*.nfasl
+*.cfsl
+*.abcl

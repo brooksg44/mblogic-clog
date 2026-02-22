@@ -70,3 +70,11 @@
   :perform (test-op (o c) (symbol-call :fiveam '#:run!
                                        (find-symbol* '#:ld-visualization-tests
                                                      :mblogic-cl-test))))
+
+(asdf:defsystem #:mblogic-clog/builder
+  :description "CLOG Builder for MBLogic-CLOG development"
+  :author "Gregory Brooks"
+  :license "GPL-3.0"
+  :depends-on (#:mblogic-clog/web
+               #:clog/tools)
+  :components ())

@@ -1,0 +1,3 @@
+clog, ghcr.io/ocicl/clog@sha256:712416d27c5748262c06bfbbc1cc81002f7ef53c97dd63dfcb1487d5bf05bbee, clog-20251120-6ab1e21/clog.asd
+hello-builder, ghcr.io/ocicl/clog@sha256:712416d27c5748262c06bfbbc1cc81002f7ef53c97dd63dfcb1487d5bf05bbee, clog-20251120-6ab1e21/tutorial/28-tutorial/hello-builder/hello-builder.asd
+hello-clog, ghcr.io/ocicl/clog@sha256:712416d27c5748262c06bfbbc1cc81002f7ef53c97dd63dfcb1487d5bf05bbee, clog-20251120-6ab1e21/tutorial/13-tutorial/hello-clog/hello-clog.asd
