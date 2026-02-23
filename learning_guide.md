@@ -14,7 +14,7 @@ ladder-program
 JSON sent to browser
 ```
 
-The packages are separate: `parser.lisp` lives in `#:mblogic-cl`; `ladder-render.lisp` lives in `#:mblogic-clog-web`. The renderer reaches into the parser's package by prefixing symbols: `mblogic-cl:parsed-opcode`, `mblogic-cl:network-instructions`, etc.
+The packages are separate: `parser.lisp` lives in `#:mblogic-clog`; `ladder-render.lisp` lives in `#:mblogic-clog-web`. The renderer reaches into the parser's package by prefixing symbols: `mblogic-clog:parsed-opcode`, `mblogic-clog:network-instructions`, etc.
 
 ---
 
@@ -45,18 +45,18 @@ parsed-program
 
 ```lisp
 ;; From a file:
-(mblogic-cl:parse-il-file "path/to/prog.txt")  ; → parsed-program
+(mblogic-clog:parse-il-file "path/to/prog.txt")  ; → parsed-program
 
 ;; From a string (useful for tests):
-(mblogic-cl:parse-il-string "NETWORK 1\nSTR X1\nOUT Y1")  ; → parsed-program
+(mblogic-clog:parse-il-string "NETWORK 1\nSTR X1\nOUT Y1")  ; → parsed-program
 ```
 
 ### What `parsed-instruction-def` is
 
 Each `parsed-instruction` holds a back-reference to the instruction definition found by `find-instruction`. The renderer uses two slots from this definition:
 
-- `mblogic-cl:instruction-ladsymb` — a keyword like `:contact-no`, `:coil`, `:timer`
-- `mblogic-cl:instruction-monitor` — a keyword like `:bool`, `:timer`, `:counter`
+- `mblogic-clog:instruction-ladsymb` — a keyword like `:contact-no`, `:coil`, `:timer`
+- `mblogic-clog:instruction-monitor` — a keyword like `:bool`, `:timer`, `:counter`
 
 If `parsed-instruction-def` is `nil` the opcode was not recognised; the parser records an error.
 
@@ -103,35 +103,35 @@ The renderer reads exactly four things from the parser's objects:
 
 ```lisp
 ;; In program-to-ladder:
-(mblogic-cl:program-main-networks parsed-program)
-(mblogic-cl:program-subroutines  parsed-program)  ; hash-table
-(mblogic-cl:subroutine-networks  sbr)
+(mblogic-clog:program-main-networks parsed-program)
+(mblogic-clog:program-subroutines  parsed-program)  ; hash-table
+(mblogic-clog:subroutine-networks  sbr)
 ```
 
 ### 2. Reading each network
 
 ```lisp
 ;; In network-to-ladder-rung:
-(mblogic-cl:network-instructions network)  ; → list of parsed-instruction
-(mblogic-cl:network-number       network)
-(mblogic-cl:network-comments     network)
+(mblogic-clog:network-instructions network)  ; → list of parsed-instruction
+(mblogic-clog:network-number       network)
+(mblogic-clog:network-comments     network)
 ```
 
 ### 3. Reading each instruction
 
 ```lisp
 ;; In instruction-to-cell and extract-addresses:
-(mblogic-cl:parsed-opcode          instr)   ; "STR", "AND", "OUT", ...
-(mblogic-cl:parsed-params          instr)   ; '("X1") or '("T1" "100")
-(mblogic-cl:parsed-instruction-def instr)   ; → instruction definition object
+(mblogic-clog:parsed-opcode          instr)   ; "STR", "AND", "OUT", ...
+(mblogic-clog:parsed-params          instr)   ; '("X1") or '("T1" "100")
+(mblogic-clog:parsed-instruction-def instr)   ; → instruction definition object
 ```
 
 ### 4. Reading the instruction definition
 
 ```lisp
 ;; In instruction-to-cell and get-monitor-type:
-(mblogic-cl:instruction-ladsymb instr-def)  ; :contact-no, :coil, :timer, ...
-(mblogic-cl:instruction-monitor instr-def)  ; :bool, :timer, :counter, nil
+(mblogic-clog:instruction-ladsymb instr-def)  ; :contact-no, :coil, :timer, ...
+(mblogic-clog:instruction-monitor instr-def)  ; :bool, :timer, :counter, nil
 ```
 
 ---
