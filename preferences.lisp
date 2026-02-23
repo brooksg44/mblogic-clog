@@ -1,0 +1,147 @@
+(in-package :clog-tools)
+
+;; Add directories to use custom directories for storing projects
+;; when quicklisp not used (ocicl) this is emulated.
+;; (pushnew #P"/path/of/projects" ql:*local-project-directories* :test #'equalp)
+;;
+;; System to be available but not listed:
+;; (pushnew #P"/path/to/a/project" asdf:*central-registry* :test #'equalp)
+
+;; Register mblogic-clog project with ASDF
+(pushnew #P"/Users/gregorybrooks/common-lisp/mblogic-clog/" asdf:*central-registry* :test #'equalp)
+
+;; Preferences loaded on next call to clog-tools:clog-builder or [Eval All]
+
+;; Load extensions to CLOG Builder and Plugins
+;;
+;; CLOG Builder Extensions
+;;------------------------
+;; clog-moldable-inspector -
+;; https://codeberg.org/khinsen/clog-moldable-inspector
+;; (ql:quickload :clog-moldable-inspector/tools)
+;;
+;; CLOG Plugins
+;;-------------
+;; Plugins should be added to your .asd project if used
+;;
+;; ACE editor
+;; (ql:quickload :clog-ace/tools)
+;;
+;; jTerminal
+;; (ql:quickload :clog-terminal/tools)
+
+;; CLOG Builder Desktop
+
+;; To password protect use of the IDE set to a password or a function that
+;; returns a password (lambda clog-body)
+(setf *password-protect* nil)
+
+;; Open panels and files in new browser tabs by default
+(setf *open-external* nil)
+;; Force panels to open in new browser tabs
+(setf *open-external-panels-always* nil)
+;; Use clog-popup and extend desktop to popups
+(setf *open-external-using-clog-popups* t)
+
+;; CLOG Panels
+
+;; Open panel editors in browser popups instead of tabs if browser allows
+(setf *open-external-panels-in-popup* nil)
+
+;; CLOG Project Tree
+
+;; When opennning source editors not external, open to fill right of tree to
+;; browser edge
+(setf *project-tree-sticky-open* t)
+;; Regex filters to use when set to remove from project directories
+(setf *project-tree-dir-filter* "(\\\\|\\/)\\..*(\\\\|\\/)$")
+(setf *project-tree-file-filter* "(^\\..*)|(.*~$)|(.*\\.bak$)")
+
+;; CLOG Source Editor
+
+;; Open files in browser popups instead of tabs if browser allows
+(setf *open-external-source-in-popup* nil)
+;; Use console for evals instead of capture
+(setf *editor-use-console-for-evals* nil)
+;; Use TAB key as in emacs (can always use ctl/alt-t)
+(setf *editor-use-tab-as-tabbify* t)
+;; Use emacs instead of the source-editor when opening external
+;; must start builder for slime in emacs
+(setf *open-external-with-emacs* nil)
+;; Best Light Theme for Lisp
+(setf *editor-theme* "ace/theme/iplastic")
+;; Best Dark Theme for Lisp
+;;(setf *editor-theme* "ace/theme/terminal")
+;;(setf *editor-keybinding* "ace/keyboard/emacs")
+(setf *editor-keybinding* "ace/keyboard/ace")
+(setf *editor-tab-size* 2)
+;; See https://github.com/ajaxorg/ace/wiki/Configuring-Ace
+(setf *editor-renderer-options*
+"fontSize : 14,
+ showInvisibles : false,
+ displayIndentGuides : true,
+ printMarginColumn : 80,
+ showPrintMargin : true,
+ showLineNumbers : true,
+ showGutter : true,
+ enableBasicAutocompletion: true,
+ enableLiveAutocompletion : true")
+
+;; Delay to automaticly close result windows - nil no auto close
+(setf *editor-delay-on-eval-sel* 15)
+(setf *editor-delay-on-eval-panels* 30)
+(setf *editor-delay-on-eval-form* 30)
+(setf *editor-delay-on-eval-file* 60)
+
+;; Server Settings
+;; when true turns off debug hooks
+(setf clog-connection:*disable-clog-debugging* nil)
+;; verbose server output
+(setf clog-connection:*verbose-output* nil)
+;; run a browser-gc on every ping
+(setf clog-connection:*browser-gc-on-ping* nil)
+;; allow invoking debugger
+(setf clog-connection:*break-on-error* t)
+;; time to delay for possible reconnect, such as after sleep or
+;; long network latenacies.
+(setf clog-connection:*reconnect-delay* 7)
+
+;; CLOG Builder REPL
+(setf *clog-repl-use-console* t)
+(setf *clog-repl-open-console-on-start* nil)
+(setf *clog-repl-send-result-to-console* nil)
+(setf *clog-repl-private-console* t)
+;; eval on main thread so (break) works for sbcl.
+(setf *clog-repl-eval-on-main-thread* nil)
+
+;; CLOG Panel Rendering
+(setf *builder-render-right-margin* 80)
+(setf *builder-render-case* :downcase)
+
+;; CLOG Builder Look and Feel
+
+;; General
+(setf *builder-left-panel-size* 300)
+(setf *builder-window-desktop-class* "w3-blue-grey")
+(setf *builder-window-show-static-root-class* "w3-grey")
+(setf *builder-show-callers-class* "w3-orange")
+(setf *builder-show-callees-class* "w3-orange")
+(setf *builder-menu-button-class* "w3-input w3-grey w3-button w3-ripple")
+(setf *builder-pallete-class* "w3-light-grey w3-small")
+(setf *builder-event-list-class* "w3-light-grey w3-small")
+(setf *builder-panel-class* "w3-white w3-sans-serif w3-medium")
+(setf *builder-menu-search-class* "w3-light-grey w3-bar-item")
+
+;; Menus
+(setf *builder-menu-bar-class* "w3-bar w3-round w3-small w3-blue-grey w3-card-4")
+(setf *builder-menu-bar-drop-down-class* "w3-dropdown-content w3-bar-block w3-card-4")
+(setf *builder-menu-item-class* "w3-bar-item w3-blue-grey w3-button")
+(setf *builder-menu-window-select-class* "w3-grey w3-bar-item w3-button")
+(setf *builder-menu-context-item-class* "w3-button w3-bar")
+
+;; Window treatements
+(setf *builder-title-class* "w3-blue-grey w3-round")
+(setf *builder-border-class* "w3-card-4 w3-white w3-border w3-round")
+(setf *builder-package-class* "w3-white w3-round")
+(setf *builder-status-bar-class* "w3-tiny w3-border")
+(setf *builder-icons-class* "w3-button w3-white w3-round w3-border w3-border-black w3-ripple")
