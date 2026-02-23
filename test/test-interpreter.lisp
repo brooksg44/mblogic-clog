@@ -1,7 +1,7 @@
 ;;;; test-interpreter.lisp
 ;;;; Phase 7: PLC interpreter tests
 
-(in-package #:mblogic-cl-test)
+(in-package #:mblogic-clog-test)
 
 (in-suite interpreter-tests)
 

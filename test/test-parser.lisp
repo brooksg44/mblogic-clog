@@ -1,7 +1,7 @@
 ;;;; test-parser.lisp
 ;;;; Phase 7: IL parser tests
 
-(in-package #:mblogic-cl-test)
+(in-package #:mblogic-clog-test)
 
 (in-suite parser-tests)
 

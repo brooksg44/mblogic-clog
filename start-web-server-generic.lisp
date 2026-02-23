@@ -34,17 +34,17 @@
 ;; Parse and load the program
 (format t "~%Parsing IL program: ~A~%" *il-file*)
 (defparameter *parsed-prog*
-  (mblogic-cl:parse-il-file *il-file*))
+  (mblogic-clog:parse-il-file *il-file*))
 
 ;; Compile the program
 (format t "Compiling program...~%")
-(defparameter *compiler* (mblogic-cl:make-il-compiler))
+(defparameter *compiler* (mblogic-clog:make-il-compiler))
 (defparameter *compiled-prog*
-  (mblogic-cl:compile-program *compiler* *parsed-prog*))
+  (mblogic-clog:compile-program *compiler* *parsed-prog*))
 
 ;; Create interpreter with compiled program
 (defparameter *interp*
-  (mblogic-cl:make-plc-interpreter :program *compiled-prog*))
+  (mblogic-clog:make-plc-interpreter :program *compiled-prog*))
 
 ;; Start web server with interpreter
 (format t "~%Starting CLOG web server on port 8080...~%")
@@ -59,13 +59,13 @@
 (format t "  Ladder Diagram Viewer: http://localhost:8080~%")
 (format t "~%")
 (format t "  Available Subroutines:~%")
-(let ((main-nets (mblogic-cl:program-main-networks *parsed-prog*)))
+(let ((main-nets (mblogic-clog:program-main-networks *parsed-prog*)))
   (when main-nets
     (format t "    - main~%")))
 (maphash (lambda (name sbr)
            (declare (ignore sbr))
            (format t "    - ~A~%" name))
-         (mblogic-cl:program-subroutines *parsed-prog*))
+         (mblogic-clog:program-subroutines *parsed-prog*))
 (format t "~%")
 (format t "  Press Ctrl+C to stop the server~%")
 (format t "~%")

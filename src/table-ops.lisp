@@ -3,7 +3,7 @@
 ;;;; Phase 6: Table Operations Library
 ;;;; Implements COPY, CPYBLK, FILL, PACK, UNPACK, SHFRG, FIND* operations
 
-(in-package #:mblogic-cl)
+(in-package #:mblogic-clog)
 
 ;;; ============================================================
 ;;; Address Parsing and Range Utilities

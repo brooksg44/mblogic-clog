@@ -3,7 +3,7 @@
 ;;;; Phase 6: Timer and Counter Library
 ;;;; Implements TMR, TMRA, TMROFF, CNTU, CNTD, UDC
 
-(in-package #:mblogic-cl)
+(in-package #:mblogic-clog)
 
 ;;; ============================================================
 ;;; Timer State Storage Keys

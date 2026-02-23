@@ -3,7 +3,7 @@
 ;;;; Phase 4: IL Compiler
 ;;;; Generates executable Lisp code from parsed IL
 
-(in-package #:mblogic-cl)
+(in-package #:mblogic-clog)
 
 ;;; ============================================================
 ;;; Compile Error Condition

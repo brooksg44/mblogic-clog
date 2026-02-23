@@ -1,6 +1,6 @@
 ;;;; Simple test to print Rung 3 matrix
 
-(in-package #:mblogic-cl-test)
+(in-package #:mblogic-clog-test)
 
 (defun rung3-symbol-matrix ()
   "Parse Rung 3 IL and return symbol matrix as printed output"
@@ -20,21 +20,21 @@ ANDGT DS112 86
 ANDSTR
 SET C101
 ")
-         (program (mblogic-cl:parse-il-string source))
-         (network (first (mblogic-cl:program-main-networks program)))
-    (mblogic-cl-web::network-to-ladder-rung network)))
+         (program (mblogic-clog:parse-il-string source))
+         (network (first (mblogic-clog:program-main-networks program)))
+    (mblogic-clog-web::network-to-ladder-rung network)))
 
 (defun print-rung3-matrix ()
   "Parse Rung 3 and print the matrix structure"
   (let* ((rung (rung3-symbol-matrix))
-         (cells (mblogic-cl-web::ladder-rung-cells rung))
-         (rows (mblogic-cl-web::ladder-rung-rows rung))
-         (cols (mblogic-cl-web::ladder-rung-cols rung))
+         (cells (mblogic-clog-web::ladder-rung-cells rung))
+         (rows (mblogic-clog-web::ladder-rung-rows rung))
+         (cols (mblogic-clog-web::ladder-rung-cols rung))
          (matrix (make-array (list rows cols) :initial-element nil)))
     (dolist (cell cells)
-      (let ((row (mblogic-cl-web::ladder-cell-row cell))
-            (col (mblogic-cl-web::ladder-cell-col cell))
-            (sym (mblogic-cl-web::ladder-cell-symbol cell)))
+      (let ((row (mblogic-clog-web::ladder-cell-row cell))
+            (col (mblogic-clog-web::ladder-cell-col cell))
+            (sym (mblogic-clog-web::ladder-cell-symbol cell)))
         (when (and (< row rows) (< col cols))
           (setf (aref matrix row col) sym))))
     (format t "~%~%=== RUNG 3 MATRIX ===~%")

@@ -27,18 +27,18 @@
 ;; Parse and load the test program
 (format t "~%Parsing IL program...~%")
 (defparameter *parsed-prog*
-  (mblogic-cl:parse-il-file
+  (mblogic-clog:parse-il-file
    (namestring (merge-pathnames "test/plcprog.txt" *mblogic-base-dir*))))
 
 ;; Compile the program
 (format t "Compiling program...~%")
-(defparameter *compiler* (mblogic-cl:make-il-compiler))
+(defparameter *compiler* (mblogic-clog:make-il-compiler))
 (defparameter *compiled-prog*
-  (mblogic-cl:compile-program *compiler* *parsed-prog*))
+  (mblogic-clog:compile-program *compiler* *parsed-prog*))
 
 ;; Create interpreter with compiled program
 (defparameter *interp*
-  (mblogic-cl:make-plc-interpreter :program *compiled-prog*))
+  (mblogic-clog:make-plc-interpreter :program *compiled-prog*))
 
 ;; Start web server with interpreter
 (format t "~%Starting CLOG web server on port 8080...~%")
@@ -55,7 +55,7 @@
 (maphash (lambda (name sbr)
            (declare (ignore sbr))
            (format t "    - ~A~%" name))
-         (mblogic-cl:program-subroutines *parsed-prog*))
+         (mblogic-clog:program-subroutines *parsed-prog*))
 (format t "~%")
 (format t "  Press Ctrl+C to stop the server~%")
 (format t "~%")

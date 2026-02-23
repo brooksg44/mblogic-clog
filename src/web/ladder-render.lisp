@@ -10,35 +10,36 @@
 ;;; ============================================================
 
 (defparameter *ladsymb-to-svg*
-              '((:contact-no . "noc") ; Normally open contact
-                                     (:contact-nc . "ncc") ; Normally closed contact
-                                     (:contact-pd . "nocpd") ; Positive differential (rising edge) contact
-                                     (:contact-nd . "nocnd") ; Negative differential (falling edge) contact
-                                     (:coil . "out") ; Standard output coil
-                                     (:coil-set . "set") ; Set (latch) coil
-                                     (:coil-reset . "rst") ; Reset (unlatch) coil
-                                     (:coil-pd . "pd") ; Pulse coil
-                                     (:branch-end . nil) ; Branch end - no symbol, handled structurally
-                                     (:compare . "compare") ; Comparison block
-                                     (:timer . "tmr") ; Timer block
-                                     (:counter . "cntu") ; Counter block
-                                     (:math . "mathdec") ; Math block
-                                     (:copy . "copy") ; Copy instruction
-                                     (:cpyblk . "cpyblk") ; Block copy
-                                     (:fill . "fill") ; Fill instruction
-                                     (:pack . "pack") ; Pack bits
-                                     (:unpack . "unpack") ; Unpack bits
-                                     (:shfrg . "shfrg") ; Shift register
-                                     (:find . "findeq") ; Search instruction
-                                     (:sum . "sum") ; Sum instruction
-                                     (:call . "call") ; Subroutine call
-                                     (:return . "rt") ; Return
-                                     (:return-cond . "rtc") ; Conditional return
-                                     (:end . "end") ; End
-                                     (:end-cond . "endc") ; Conditional end
-                                     (:for . "for") ; For loop start
-                                     (:next . "next")) ; For loop end
-              "Mapping from instruction :ladsymb to SVG symbol names")
+              '(
+                (:contact-no . "noc")   ; Normally open contact
+                (:contact-nc . "ncc")   ; Normally closed contact
+                (:contact-pd . "nocpd") ; Positive differential (rising edge) contact
+                (:contact-nd . "nocnd") ; Negative differential (falling edge) contact
+                (:coil . "out")         ; Standard output coil
+                (:coil-set . "set")     ; Set (latch) coil
+                (:coil-reset . "rst")   ; Reset (unlatch) coil
+                (:coil-pd . "pd")       ; Pulse coil
+                (:branch-end . nil)     ; Branch end - no symbol, handled structurally
+                (:compare . "compare")  ; Comparison block
+                (:timer . "tmr")        ; Timer block
+                (:counter . "cntu")     ; Counter block
+                (:math . "mathdec")     ; Math block
+                (:copy . "copy")        ; Copy instruction
+                (:cpyblk . "cpyblk")    ; Block copy
+                (:fill . "fill")        ; Fill instruction
+                (:pack . "pack")        ; Pack bits
+                (:unpack . "unpack")    ; Unpack bits
+                (:shfrg . "shfrg")      ; Shift register
+                (:find . "findeq")      ; Search instruction
+                (:sum . "sum")          ; Sum instruction
+                (:call . "call")        ; Subroutine call
+                (:return . "rt")        ; Return
+                (:return-cond . "rtc")  ; Conditional return
+                (:end . "end")          ; End
+                (:end-cond . "endc")    ; Conditional end
+                (:for . "for")          ; For loop start
+                (:next . "next"))       ; For loop end
+  "Mapping from instruction :ladsymb to SVG symbol names")
 
 (defun ladsymb-to-svg-symbol (ladsymb opcode)
   "Convert instruction ladsymb keyword to SVG symbol name.
@@ -306,19 +307,19 @@
 
 (defun extract-addresses (instruction)
   "Extract all monitorable addresses from a parsed instruction"
-  (let ((opcode (mblogic-cl:parsed-opcode instruction))
-        (params (mblogic-cl:parsed-params instruction))
+  (let ((opcode (mblogic-clog:parsed-opcode instruction))
+        (params (mblogic-clog:parsed-params instruction))
         (addresses nil))
     (cond
      ;; Contact instructions - single boolean address
      ((contact-instruction-p opcode)
-       (when (and params (mblogic-cl:bool-addr-p (first params)))
+       (when (and params (mblogic-clog:bool-addr-p (first params)))
              (push (first params) addresses)))
 
      ;; Coil instructions - multiple boolean addresses
      ((coil-instruction-p opcode)
        (dolist (p params)
-         (when (mblogic-cl:bool-addr-p p)
+         (when (mblogic-clog:bool-addr-p p)
                (push p addresses))))
 
      ;; Timer - timer address and preset
@@ -353,21 +354,21 @@
      ;; COPY - source and dest
      ((string-equal opcode "COPY")
        (dolist (p params)
-         (when (mblogic-cl:any-addr-p p)
+         (when (mblogic-clog:any-addr-p p)
                (push p addresses))))
 
      ;; Math - destination
      ((member opcode '("MATHDEC" "MATHHEX") :test #'string-equal)
-       (when (and params (mblogic-cl:any-addr-p (first params)))
+       (when (and params (mblogic-clog:any-addr-p (first params)))
              (push (first params) addresses))))
 
     (nreverse addresses)))
 
 (defun get-monitor-type (instruction)
   "Determine the monitor type for an instruction"
-  (let ((instr-def (mblogic-cl:parsed-instruction-def instruction)))
+  (let ((instr-def (mblogic-clog:parsed-instruction-def instruction)))
     (when instr-def
-          (mblogic-cl:instruction-monitor instr-def))))
+          (mblogic-clog:instruction-monitor instr-def))))
 
 ;;; ============================================================
 ;;; Instruction to Cell Conversion
@@ -375,10 +376,10 @@
 
 (defun instruction-to-cell (instruction col)
   "Convert a parsed instruction to a ladder cell"
-  (let* ((opcode (mblogic-cl:parsed-opcode instruction))
-         (params (mblogic-cl:parsed-params instruction))
-         (instr-def (mblogic-cl:parsed-instruction-def instruction))
-         (ladsymb (when instr-def (mblogic-cl:instruction-ladsymb instr-def)))
+  (let* ((opcode (mblogic-clog:parsed-opcode instruction))
+         (params (mblogic-clog:parsed-params instruction))
+         (instr-def (mblogic-clog:parsed-instruction-def instruction))
+         (ladsymb (when instr-def (mblogic-clog:instruction-ladsymb instr-def)))
          (svg-symbol (ladsymb-to-svg-symbol ladsymb opcode))
          (addresses (extract-addresses instruction)))
 
@@ -756,7 +757,7 @@
    - ORSTR: pop stack, merge below, close block
    - ANDSTR: pop stack, merge right (add left connectors)
    - Outputs are handled separately after inputs"
-  (let ((instructions (mblogic-cl:network-instructions network))
+  (let ((instructions (mblogic-clog:network-instructions network))
         (all-addresses nil)
         ;; Input matrix processing
         (current-matrix (list (list))) ; Start with one empty row
@@ -770,7 +771,7 @@
     (let ((inputs nil)
           (outputs nil))
       (dolist (instr instructions)
-        (let ((opcode (mblogic-cl:parsed-opcode instr)))
+        (let ((opcode (mblogic-clog:parsed-opcode instr)))
           (cond
            ((coil-instruction-p opcode)
              (push instr outputs))
@@ -785,7 +786,7 @@
 
       ;; Process input instructions using matrix algorithm (matches Python exactly)
       (dolist (instr inputs)
-        (let* ((opcode (mblogic-cl:parsed-opcode instr))
+        (let* ((opcode (mblogic-clog:parsed-opcode instr))
                (cell (instruction-to-cell instr 0)))
 
           ;; Collect addresses
@@ -860,15 +861,15 @@
       ;; First pass: collect all output cells with sequential row numbers
       (let ((output-row 0))
         (dolist (instr outputs)
-          (let* ((opcode (mblogic-cl:parsed-opcode instr))
-                 (params (mblogic-cl:parsed-params instr)))
+          (let* ((opcode (mblogic-clog:parsed-opcode instr))
+                 (params (mblogic-clog:parsed-params instr)))
             (cond
              ;; Coil with potentially multiple addresses
              ((coil-instruction-p opcode)
                ;; Check if this is a range address (2 params for coil = range)
                (let ((is-range (> (length params) 1)))
                  (dolist (addr params)
-                   (when (mblogic-cl:bool-addr-p addr)
+                   (when (mblogic-clog:bool-addr-p addr)
                          ;; Column 1 to leave room for branch connector at column 0
                          (let ((cell (make-coil-cell opcode addr 1 output-row is-range)))
                            (push cell output-cells)
@@ -876,8 +877,8 @@
                            (incf output-row))))))
              ;; Output block instructions (TMR, CNTU, COPY, MATHDEC, etc.)
              ((output-block-instruction-p opcode)
-               (let* ((instr-def (mblogic-cl:parsed-instruction-def instr))
-                      (ladsymb (when instr-def (mblogic-cl:instruction-ladsymb instr-def)))
+               (let* ((instr-def (mblogic-clog:parsed-instruction-def instr))
+                      (ladsymb (when instr-def (mblogic-clog:instruction-ladsymb instr-def)))
                       (svg-symbol (ladsymb-to-svg-symbol ladsymb opcode))
                       ;; All params go into addresses (matches demodata.js format)
                       (addr-list (if params (copy-list params) (list "")))
@@ -891,11 +892,11 @@
                              :row output-row
                              :col 1
                              :monitor-type (when instr-def
-                                                 (mblogic-cl:instruction-monitor instr-def)))))
+                                                 (mblogic-clog:instruction-monitor instr-def)))))
                  (push cell output-cells)
                  ;; Track PLC addresses for monitoring
                  (dolist (p params)
-                   (when (mblogic-cl:any-addr-p p)
+                   (when (mblogic-clog:any-addr-p p)
                          (pushnew p all-addresses :test #'string-equal)))
                  (incf output-row)))
              ;; Control instructions (END, RT, etc.)
@@ -939,12 +940,12 @@
 
           ;; Build the rung (no longer needs branch metadata - it's in the cells)
           (make-ladder-rung
-           :number (mblogic-cl:network-number network)
+           :number (mblogic-clog:network-number network)
            :cells (append (nreverse input-cells) (nreverse output-cells))
            :rows (max matrix-height (length output-cells) 1)
            :cols matrix-width
            :addresses (nreverse all-addresses)
-           :comment (first (mblogic-cl:network-comments network))
+           :comment (first (mblogic-clog:network-comments network))
            :branches nil ; No longer needed - explicit cells
            :output-branches nil)))))) ; No longer needed - explicit cells
 
@@ -979,10 +980,10 @@
   "Convert a parsed program to ladder diagram structure.
    NAME specifies which subroutine (or 'main' for main program)."
   (if (string-equal name "main")
-      (networks-to-ladder (mblogic-cl:program-main-networks parsed-program) "main")
-      (let ((sbr (gethash name (mblogic-cl:program-subroutines parsed-program))))
+      (networks-to-ladder (mblogic-clog:program-main-networks parsed-program) "main")
+      (let ((sbr (gethash name (mblogic-clog:program-subroutines parsed-program))))
         (when sbr
-              (networks-to-ladder (mblogic-cl:subroutine-networks sbr) name)))))
+              (networks-to-ladder (mblogic-clog:subroutine-networks sbr) name)))))
 
 (defun list-subroutine-names (parsed-program)
   "Return list of all subroutine names in a parsed program"
@@ -990,7 +991,7 @@
     (maphash (lambda (name sbr)
                (declare (ignore sbr))
                (push name names))
-             (mblogic-cl:program-subroutines parsed-program))
+             (mblogic-clog:program-subroutines parsed-program))
     (sort names #'string<)))
 
 ;;; ============================================================

@@ -3,7 +3,7 @@
 ;;;; Phase 5: Runtime Interpreter
 ;;;; Executes compiled programs with scan-based real-time behavior
 
-(in-package #:mblogic-cl)
+(in-package #:mblogic-clog)
 
 ;;; ============================================================
 ;;; Runtime Error Condition

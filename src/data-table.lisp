@@ -3,7 +3,7 @@
 ;;;; Phase 1: Core Data Structures
 ;;;; Implements PLC memory spaces (Boolean, Word, Float, String)
 
-(in-package #:mblogic-cl)
+(in-package #:mblogic-clog)
 
 ;;; CLOS Class Definitions
 

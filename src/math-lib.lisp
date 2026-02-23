@@ -3,7 +3,7 @@
 ;;;; Phase 6: Math Library
 ;;;; Implements MATHDEC, MATHHEX, and supporting math operations
 
-(in-package #:mblogic-cl)
+(in-package #:mblogic-clog)
 
 ;;; ============================================================
 ;;; Expression Tokenizer

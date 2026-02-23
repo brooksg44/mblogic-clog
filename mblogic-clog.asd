@@ -54,7 +54,7 @@
                              (:file "test-interpreter"))))
   :perform (test-op (o c) (symbol-call :fiveam '#:run!
                                        (find-symbol* '#:all-tests
-                                                     :mblogic-cl-test))))
+                                                     :mblogic-clog-test))))
 
 (asdf:defsystem #:mblogic-clog/web-test
   :description "Test suite for mblogic-clog web visualization"
@@ -69,7 +69,7 @@
                 :components ((:file "test-ld-visualization"))))
   :perform (test-op (o c) (symbol-call :fiveam '#:run!
                                        (find-symbol* '#:ld-visualization-tests
-                                                     :mblogic-cl-test))))
+                                                     :mblogic-clog-test))))
 
 (asdf:defsystem #:mblogic-clog/builder
   :description "CLOG Builder for MBLogic-CLOG development"

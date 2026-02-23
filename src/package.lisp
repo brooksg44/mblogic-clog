@@ -1,6 +1,6 @@
 ;;;; package.lisp
 
-(defpackage #:mblogic-cl
+(defpackage #:mblogic-clog
   (:use #:cl #:alexandria)
   (:export
    ;; Data table exports

@@ -3,7 +3,7 @@
 ;;;; Phase 3: IL Parser
 ;;;; Parses text IL programs into structured instruction lists
 
-(in-package #:mblogic-cl)
+(in-package #:mblogic-clog)
 
 ;;; ============================================================
 ;;; Parse Error Condition

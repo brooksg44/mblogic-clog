@@ -1,7 +1,7 @@
 ;;;; test-data-table.lisp
 ;;;; Phase 7: Data table tests
 
-(in-package #:mblogic-cl-test)
+(in-package #:mblogic-clog-test)
 
 (in-suite data-table-tests)
 

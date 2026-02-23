@@ -1,8 +1,8 @@
 ;;;; test-suite.lisp
 ;;;; Phase 7: Main test framework and utilities
 
-(defpackage #:mblogic-cl-test
-  (:use #:cl #:mblogic-cl #:fiveam)
+(defpackage #:mblogic-clog-test
+  (:use #:cl #:mblogic-clog #:fiveam)
   (:export #:all-tests
            #:data-table-tests
            #:parser-tests
@@ -15,7 +15,7 @@
            #:run-quick-tests
            #:run-web-tests))
 
-(in-package #:mblogic-cl-test)
+(in-package #:mblogic-clog-test)
 
 ;;; ============================================================
 ;;; Test Suites Definition
@@ -70,7 +70,7 @@
 (defun read-test-file (filename)
   "Read test IL program from test directory"
   (let ((path (merge-pathnames filename
-                               (asdf:system-relative-pathname :mblogic-cl "test/"))))
+                               (asdf:system-relative-pathname :mblogic-clog "test/"))))
     (with-open-file (in path :direction :input)
       (loop for line = (read-line in nil)
             while line

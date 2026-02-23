@@ -1,7 +1,7 @@
 ;;;; test-compiler.lisp
 ;;;; Phase 7: IL compiler tests
 
-(in-package #:mblogic-cl-test)
+(in-package #:mblogic-clog-test)
 
 (in-suite compiler-tests)
 

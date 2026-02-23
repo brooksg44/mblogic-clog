@@ -56,7 +56,7 @@
             (bt:make-thread
              (lambda ()
                (handler-case
-                   (mblogic-cl:run-continuous *plc-interpreter*
+                   (mblogic-clog:run-continuous *plc-interpreter*
                                               :target-scan-time 10)
                  (error (e)
                    (format *error-output* "PLC thread error: ~A~%" e))))
@@ -67,7 +67,7 @@
   "Stop the PLC interpreter thread."
   (bt:with-lock-held (*plc-lock*)
     (when *plc-interpreter*
-      (mblogic-cl:stop-interpreter *plc-interpreter*))
+      (mblogic-clog:stop-interpreter *plc-interpreter*))
     (when *plc-thread*
       (sleep 0.1)
       (setf *plc-thread* nil))
@@ -77,13 +77,13 @@
   "Check if PLC thread is running."
   (and *plc-thread*
        *plc-interpreter*
-       (mblogic-cl:interpreter-running-p *plc-interpreter*)))
+       (mblogic-clog:interpreter-running-p *plc-interpreter*)))
 
 (defun step-plc ()
   "Execute a single PLC scan."
   (bt:with-lock-held (*plc-lock*)
     (when *plc-interpreter*
-      (mblogic-cl:step-scan *plc-interpreter*)
+      (mblogic-clog:step-scan *plc-interpreter*)
       t)))
 
 ;;; ============================================================
@@ -216,8 +216,8 @@
   (let ((ladder-div (connection-state-ladder-div conn-state))
         (subrname (connection-state-subroutine-name conn-state)))
     (when (and ladder-div *plc-interpreter*)
-      (let* ((program (mblogic-cl:interpreter-program *plc-interpreter*))
-             (source (when program (mblogic-cl:program-source program))))
+      (let* ((program (mblogic-clog:interpreter-program *plc-interpreter*))
+             (source (when program (mblogic-clog:program-source program))))
         (when source
           (let ((ladder (program-to-ladder source (or subrname "main"))))
             (when ladder
@@ -490,11 +490,11 @@
                       (and (stringp il-source)
                            (probe-file il-source))))
          (compiled (if is-file
-                       (mblogic-cl:compile-il-file (if (stringp il-source)
+                       (mblogic-clog:compile-il-file (if (stringp il-source)
                                                         (pathname il-source)
                                                         il-source))
-                       (mblogic-cl:compile-il-string il-source)))
-         (interp (mblogic-cl:make-plc-interpreter :program compiled)))
+                       (mblogic-clog:compile-il-string il-source)))
+         (interp (mblogic-clog:make-plc-interpreter :program compiled)))
     (start-web-server :port port :interpreter interp)))
 
 ;;; End of server.lisp

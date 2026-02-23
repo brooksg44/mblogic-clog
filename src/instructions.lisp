@@ -3,7 +3,7 @@
 ;;;; Phase 2: Instruction Definitions
 ;;;; Defines the complete IL instruction set using CLOS
 
-(in-package #:mblogic-cl)
+(in-package #:mblogic-clog)
 
 ;;; ============================================================
 ;;; Instruction Type and Class Definitions
