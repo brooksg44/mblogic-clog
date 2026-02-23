@@ -3,8 +3,8 @@
 ;;;; Called by start-mblogic-clog.sh with:
 ;;;;   sbcl --eval "(defvar *il-file* \"path/to/prog.txt\")" --load this-file.lisp
 
-;; Load quicklisp
-(load "~/quicklisp/setup.lisp")
+;; Load ocicl
+(load "~/.local/share/ocicl/ocicl-runtime.lisp")
 
 ;; Determine base directory based on platform
 (defparameter *mblogic-base-dir*
@@ -19,8 +19,8 @@
 
 ;; Load the systems
 (format t "~%Loading MBLogic systems...~%")
-(ql:quickload :mblogic-clog :silent t)
-(ql:quickload :mblogic-clog/web :silent t)
+(asdf:load-system :mblogic-clog)
+(asdf:load-system :mblogic-clog/web)
 
 ;; Set static directory
 (setf mblogic-clog-web:*static-directory*
